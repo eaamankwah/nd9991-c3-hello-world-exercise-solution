@@ -35,26 +35,31 @@ version: 2.1
             #ansible-playbook -i inventory main.yml
 
 # job with a simple smoke test for verification of a server
+
+
+# Exercise: Smoke Testing
+# Exercise: Smoke Testing
+# Exercise: Smoke Testing
+
+jobs:
   smoke_test:
-    docker: 
+    docker:
       - image: alpine:latest
-    steps: 
+    steps:
+      - run: apk add --update curl
       - run:
-          name: "Install curl"
+          name: smoke test
           command: |
-            apk --no-cache add curl
-      - run: 
-          name: "Verify website is responding"
-          command: |
-            URL="https://google.com"
-            if curl -s --head ${URL}
+            URL="https://blog.udacity.com/"
+            # Test if website exists
+            if curl -s --head ${URL} 
             then
-              echo "It worked!"
               return 0
             else
-              echo "It failed"
               return 1
             fi
+      
+
 
 workflows:
   my_workflow:
