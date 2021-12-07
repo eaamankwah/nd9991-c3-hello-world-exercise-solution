@@ -41,29 +41,69 @@ version: 2.1
 # Exercise: Smoke Testing
 # Exercise: Smoke Testing
 
+#jobs:
+  #smoke_test:
+    #docker:
+      #- image: alpine:latest
+    #steps:
+      #- run: apk add --update curl
+      #- run:
+          #name: smoke test
+          #command: |
+            #URL="https://blog.udacity.com/"
+            # Test if website exists
+            #if curl -s --head ${URL} 
+            #then
+              #return 0
+            #else
+              #return 1
+            #fi
+      
+
+# Rollback
+commands:
+  destroy_environment:
+    steps:
+      - run:
+          name: Destroy environment
+          command: |
+            aws cloudformation delete-stack --stack-name prod-$(CIRCLE_WORKFLOW_ID)
+
 jobs:
+  # job that creates infrastructure in AWS using cloud formation template and rollback on failure
+  create_infrastructure:
+    docker:
+      - image: amazon/aws-cli
+    steps:
+      - checkout
+      - run:
+          name: Create Stack
+          command: |
+            aws cloudformation deploy \
+            --template-file template.yml \
+            --stack-name prod-${CIRCLE_WORKFLOW_ID} \
+            --region us-west-2
+            
+      - run: return 1 # run this command if you want to test the rollback of the environment
+      - destroy_environment
+        when: on_fail
+
+jobs:
+  # Exercise: Smoke Testing
   smoke_test:
     docker:
       - image: alpine:latest
     steps:
-      - run: apk add --update curl
       - run:
-          name: smoke test
-          command: |
-            URL="https://blog.udacity.com/"
-            # Test if website exists
-            if curl -s --head ${URL} 
-            then
-              return 0
-            else
-              return 1
-            fi
-      
+          name: Test job
+          # Fail the job intentionally to simulate an error.
+          command:  return 1
+      - destroy_environment  
 
 
 workflows:
   my_workflow:
     jobs:
-      #- create_infrastructure
+      - create_infrastructure
       #- configure_infrastructure
       - smoke_test
