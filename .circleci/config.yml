@@ -97,7 +97,7 @@ jobs:
           name: Test job
           # Fail the job intentionally to simulate an error.
           command:  return 1
-      - destroy_environment  
+      #- destroy_environment  
 
 
 workflows:
