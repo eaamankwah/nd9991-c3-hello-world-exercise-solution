@@ -1,19 +1,19 @@
 version: 2.1
 
-jobs:
+#jobs:
   # job that creates infrastructure in AWS using cloud formation template and rollback on failure
-  create_infrastructure:
-    docker:
-      - image: amazon/aws-cli
-    steps:
-      - checkout
-      - run:
-          name: Ensure backend infrastructure exist
-          command: |
-            aws cloudformation deploy \
-            --template-file template.yml \
-            --stack-name my-stack \
-            --region us-west-2
+  #create_infrastructure:
+    #docker:
+      #- image: amazon/aws-cli
+    #steps:
+      #- checkout
+      #- run:
+          #name: Ensure backend infrastructure exist
+          #command: |
+            #aws cloudformation deploy \
+            #--template-file template.yml \
+            #--stack-name my-stack \
+            #--region us-west-2
 
 jobs:
   # Exercise: Config and Deployment
